@@ -1,0 +1,93 @@
+{
+  "instructions": {
+    "Accident": {
+      "temoin": [
+        "Appelez le 15 (SAMU) ou le 18 (pompiers) immédiatement.",
+        "Ne déplacez pas les blessés sauf danger immédiat.",
+        "Balisez la zone avec votre triangle de signalisation.",
+        "Guidez les secours depuis le bord de la route.",
+        "Ne prenez pas de photos et préservez la scène pour les autorités."
+      ],
+      "implique": [
+        "Mettez le contact et sortez du véhicule en sécurité.",
+        "Appelez le 15 ou le 18 et restez en ligne.",
+        "Signalez votre position précise aux secours.",
+        "Ne fuyez pas les lieux : c'est une obligation légale.",
+        "Échangez vos coordonnées et numéro d'assurance avec les autres conducteurs."
+      ]
+    },
+    "Objet route": {
+      "temoin": [
+        "Signalez l'obstacle aux autorités via le 17 ou l'application.",
+        "Activez vos feux de détresse si vous êtes à l'arrêt.",
+        "Ne tentez pas de déplacer l'objet si la route est à fort trafic.",
+        "Prévenez les autres conducteurs avec des gestes clairs."
+      ],
+      "implique": [
+        "Immobilisez votre véhicule sur le côté en sécurité.",
+        "Appelez le 17 pour signaler l'obstacle aux forces de l'ordre.",
+        "Prenez des photos pour votre assurance.",
+        "Attendez les secours sans rester sur la chaussée."
+      ]
+    },
+    "Explosion": {
+      "temoin": [
+        "Éloignez-vous immédiatement de la zone à au moins 300 mètres.",
+        "Appelez le 18 (pompiers) et le 15 (SAMU) sans attendre.",
+        "Ne revenez pas sur les lieux pour récupérer des affaires.",
+        "Aidez les personnes à mobilité réduite à évacuer si vous le pouvez sans risque."
+      ],
+      "implique": [
+        "Evacuez la zone sans courir pour éviter les chutes.",
+        "Appelez le 15 ou le 18 dès que vous êtes en sécurité.",
+        "Ne touchez aucun objet suspect aux alentours.",
+        "Signalez votre état aux secours même si vous vous sentez bien.",
+        "Suivez les consignes des forces de l'ordre sur place."
+      ]
+    },
+    "Incendie": {
+      "temoin": [
+        "Appelez le 18 (pompiers) immédiatement.",
+        "Ne tentez pas d'éteindre le feu seul s'il est trop important.",
+        "Éloignez les personnes de la zone enfumée.",
+        "Signalez le sinistre aux automobilistes qui approchent."
+      ],
+      "implique": [
+        "Coupez le contact et sortez du véhicule sans délai.",
+        "Éloignez-vous du véhicule en feu à au moins 50 mètres.",
+        "Appelez le 18 et donnez votre position exacte.",
+        "N'ouvrez pas le capot si de la fumée s'en échappe.",
+        "Attendez les secours à l'écart du véhicule."
+      ]
+    },
+    "Inondation": {
+      "temoin": [
+        "Appelez le 18 si des personnes sont en danger.",
+        "Ne tentez pas de traverser une zone inondée à pied ou en voiture.",
+        "Prévenez les autres usagers de ne pas s'engager sur la route.",
+        "Signalez l'inondation aux services de voirie via le 17."
+      ],
+      "implique": [
+        "Arrêtez votre véhicule avant la zone inondée.",
+        "Ne tentez jamais de traverser de l'eau dont vous ne connaissez pas la profondeur.",
+        "Appelez le 18 si votre véhicule est immobilisé dans l'eau.",
+        "Sortez par les fenêtres si les portes ne s'ouvrent plus.",
+        "Rejoignez un point haut en attendant les secours."
+      ]
+    },
+    "Autre": {
+      "temoin": [
+        "Évaluez la situation avant d'intervenir.",
+        "Appelez les secours adaptés : 15 (SAMU), 17 (police), 18 (pompiers).",
+        "Sécurisez la zone si vous le pouvez sans danger.",
+        "Restez disponible pour témoigner auprès des autorités."
+      ],
+      "implique": [
+        "Mettez-vous en sécurité avant toute chose.",
+        "Contactez les secours en précisant la nature de l'événement.",
+        "Suivez les instructions données par les opérateurs.",
+        "Ne quittez pas les lieux sans l'accord des forces de l'ordre."
+      ]
+    }
+  }
+}

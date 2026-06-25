@@ -1,0 +1,162 @@
+[
+    {
+      "id": 1,
+      "name": {
+        "english": "beckman",
+        "japanese": "ベックマン",
+        "french": "beckman"
+      },
+      "description": {
+        "english": "He is a calm, intelligent, and taciturn man. He enjoys smoking cigarettes.",
+        "japanese": "彼は落ち着いた、知的で無口な男です。 彼はたばこを吸うのが好きです。",
+        "french": "C'est un homme posé, intelligent et taciturne. Il aime fumer des cigarettes."
+      },
+      "value": 4.0,
+      "pictureLowDefinition": "beckman.png",
+      "pictureHighDefinition": "beckman_large.jpg"
+    },
+    {
+      "id": 2,
+      "name": {
+        "english": "brook",
+        "japanese": "ブルック",
+        "french": "brook"
+      },
+      "description": {
+        "english": "He is a member of Luffy's crew. He is a gentleman skeleton with an AFRO haircut.",
+        "japanese": "彼はルフィの一味のメンバーです。 彼はAFROの骨紳士です。",
+        "french": "Il est membre de l'équipage de Luffy. C'est un squelette gentleman à la coupe AFRO."
+      },
+      "value": 3.0,
+      "pictureLowDefinition": "brook.png",
+      "pictureHighDefinition": "brook_large.jpg"
+    },
+    {
+      "id": 3,
+      "name": {
+        "english": "chopper",
+        "japanese": "チョッパー",
+        "french": "chopper"
+      },
+      "description": {
+        "english": "Tony Tony Chopper is a member of Luffy's crew, specifically the ship's doctor.",
+        "japanese": "トニートニーチョッパーはルフィの一味のメンバーであり、具体的には船の医者です。",
+        "french": "Tony Tony Chopper est un membre de l'équipage de Luffy précisément le médecin de l'équipage."
+      },
+      "value": 4.0,
+      "pictureLowDefinition": "chopper.png",
+      "pictureHighDefinition": "chopper_large.jpg"
+    },
+    {
+      "id": 4,
+      "name": {
+        "english": "luffy",
+        "japanese": "ルフィ",
+        "french": "luffy"
+      },
+      "description": {
+        "english": "He spends the end of his childhood in a fishing village named Fuschia, belonging to the Kingdom of Goa, located on the East Blue Sea.",
+        "japanese": "彼は東の海にあるゴア王国に属するフシァという漁村で少年時代の終わりを過ごします。",
+        "french": "Il passe la fin de son enfance dans un village de pêcheurs nommé Fuschia appartenant au Royaume de Goa, situé sur la mer d'East Blue."
+      },
+      "value": 3.0,
+      "pictureLowDefinition": "luffy.png",
+      "pictureHighDefinition": "luffy_large.jpg"
+    },
+    {
+      "id": 5,
+      "name": {
+        "english": "nami",
+        "japanese": "ナミ",
+        "french": "nami"
+      },
+      "description": {
+        "english": "She is a pirate thief, cunningly robbing them. She meets Luffy and joins him in his adventure.",
+        "japanese": "彼女は海賊の泥棒で、巧妙に彼らを強奪します。 彼女はルフィに出会い、彼の冒険に加わります。",
+        "french": "Il s'agit d'une voleuse de pirate, les dépouillant avec ruse et adresse. Elle rencontre Luffy et le rejoint dans son aventure."
+      },
+      "value": 4.0,
+      "pictureLowDefinition": "nami.png",
+      "pictureHighDefinition": "nami_large.jpg"
+    },
+    {
+      "id": 6,
+      "name": {
+        "english": "nico_robin",
+        "japanese": "ニコ・ロビン",
+        "french": "nico_robin"
+      },
+      "description": {
+        "english": "She is an archaeologist desperately searching for a legendary relic: the True History Stone, which would be the key to all the mysteries of the world of One Piece.",
+        "japanese": "彼女は絶望的に伝説の遺物である真の歴史の石を探しています。 これは、ワンピースの世界のすべての謎の鍵となるでしょう。",
+        "french": "Elle est archéologue et recherche désespérément une relique légendaire : la True History Stone, qui serait la clé de tous les mystères du monde de One Piece."
+      },
+      "value": 3.0,
+      "pictureLowDefinition": "nico_robin.png",
+      "pictureHighDefinition": "nico_robin_large.jpg"
+    },
+    {
+      "id": 7,
+      "name": {
+        "english": "nojiko",
+        "japanese": "ノジコ",
+        "french": "nojiko"
+      },
+      "description": {
+        "english": "She is Nami's half-sister and Belmer's daughter. She will get a tattoo to help Nami cope with the tattoo representing Arlong's crew that Nami was a part of.",
+        "japanese": "彼女はナミの異母妹であり、ベルメールの娘です。 彼女はナミが一部であったアーロンの乗組員を表す入れ墨を支えるためにタトゥーを入れます。",
+        "french": "C'est la demi-sœur de Nami et la fille de Belmer. Elle se fera un tatouage pour aider Nami à supporter le tatouage"
+      },
+      "value": 5.0,
+      "pictureLowDefinition": "nojiko.png",
+      "pictureHighDefinition": "nojiko_large.jpg"
+    },
+    {
+      "id": 8,
+      "name": {
+        "english": "shanks",
+        "japanese": "シャンクス",
+        "french": "shanks"
+      },
+      "description": {
+        "english": "He is Luffy's idol. He lost an arm saving Luffy from a huge sea monster. He can tolerate being spat on or dishonored, but he hates it when his friends are harmed.",
+        "japanese": "彼はルフィのアイドルです。 彼は巨大な海の怪物からルフィを救うために腕を失いました。 彼は唾を吐かれたり、不名誉にされたりすることを我慢できますが、友達が傷つけられるのを嫌います。",
+        "french": "Il est l'idole de Luffy. Il a perdu un bras en sauvant Luffy d'un énorme monstre marin. Il supporte qu'on lui crache dessus ou qu'on lui manque d'honneur mais il déteste qu'on touche à ses amis."
+      },
+      "value": 2.5,
+      "pictureLowDefinition": "shanks.png",
+      "pictureHighDefinition": "shanks_large.jpg"
+    },
+    {
+      "id": 9,
+      "name": {
+        "english": "usopp",
+        "japanese": "ウソップ",
+        "french": "usopp"
+      },
+      "description": {
+        "english": "He is an oddball with an unattractive appearance (hard to miss his Pinocchio nose). He is the cannoneer of the Merry Go. In fact, he plays more of a carpenter's role as he is an excellent handyman.",
+        "japanese": "彼は奇抜な外見の持ち主です（彼のピノキオの鼻は見逃せません）。 彼はメリーゴーの砲手です。 実際、彼は優れた職人なので、彼は大工の役割をもっと果たしています。",
+        "french": "Ce drôle de gaillard au physique ingrat (difficile de louper son nez de Pinocchio) est le canonnier du Vogue Merry. En fait il joue plutôt le rôle de charpentier car c'est un excellent bricoleur."
+      },
+      "value": 3.0,
+      "pictureLowDefinition": "usopp.png",
+      "pictureHighDefinition": "usopp_large.jpg"
+    },
+    {
+      "id": 10,
+      "name": {
+        "english": "aka_inu",
+        "japanese": "赤犬",
+        "french": "aka_inu"
+      },
+      "description": {
+        "english": "He is nicknamed the red dog and is an admiral at the Marine Headquarters, one of only three to hold such a position and subordinate only to the Chief Admiral Sengoku. His real name is Sakazuki and he was first introduced as a vice admiral.",
+        "japanese": "彼は赤犬というあだ名が付けられており、海軍本部の提督で、その地位を持つたった3人の内の1人であり、参謀総長センゴクだけが部下です。 彼の本名はサカズキで、最初は副提督として紹介されました。",
+        "french": "Il est surnommé le chien rouge est un amiral du QG de la Marine, un des trois seuls à détenir une telle position et subordonné uniquement à l'Amiral Commandant en Chef Sengoku. Son vrai nom est Sakazuki et a été d'abord introduit comme étant un vice-amiral."
+      },
+      "value": 2.5,
+      "pictureLowDefinition": "aka_inu.webp",
+      "pictureHighDefinition": "aka_inu_large.jpg"
+    }
+  ]

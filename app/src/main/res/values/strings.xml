@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Fil rouge vide</string>
+    <string name="language">french</string>
+    <string name="MainFragment_content">this app automatically inflates by Android system because this Fragment is static</string>
+    <string name="Screen1Fragment_label">Main Fragment</string>
+    <string name="content6">awsome team</string>
+    <string name="content2">Je choisis ici les parsonnages que je veux afficher en fonction de leur note</string>
+    <string name="index">index</string>
+    <string name="seekbarvalue">seekBarValue</string>
+    <string name="tanquinstate">tanquinstate</string>
+    <string name="character">valorantCharacter</string>
+    <string name="size">size</string>
+    <string name="characterlist">characterList</string>
+    <string name="data">data</string>
+    <string name="filtervalue">filterValue</string>
+    <string name="urbain">Urbain</string>
+    <string name="autoroute">Autoroute</string>
+    <string name="environnement">Environnement</string>
+    <string name="incidentTitle">Titre de l\'incident</string>
+    <string name="incidentDescription">Description des faits</string>
+    <string name="incidentReport">Signaler un incident</string>
+    <string name="go">GO</string>
+    <string name="temoin">Témoin</string>
+    <string name="implique">Impliqué</string>
+    <string name="fragment_2">fragment 2</string>
+    <string name="fragment_3">fragment 3</string>
+    <string name="fragment_4">fragment 4</string>
+    <string name="fragment_5">fragment 5</string>
+    <string name="fragment_6">fragment 6</string>
+    <string name="fragment_7">fragment 7</string>
+    <string name="incidentSend">Envoyer le rapport</string>
+</resources>

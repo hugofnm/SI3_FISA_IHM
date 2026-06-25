@@ -1,0 +1,69 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Screen4Fragment">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Urgence"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Contenu centré -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingBottom="80dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="URGENT ?"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="48dp" />
+
+        <Button
+            android:id="@+id/buttonOui"
+            android:layout_width="240dp"
+            android:layout_height="64dp"
+            android:text="OUI"
+            android:textSize="24sp"
+            android:backgroundTint="@color/green"
+            android:textColor="@color/white"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/buttonNon"
+            android:layout_width="240dp"
+            android:layout_height="64dp"
+            android:text="NON"
+            android:textSize="24sp"
+            android:backgroundTint="@color/red"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+</LinearLayout>
