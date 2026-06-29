@@ -1,13 +1,17 @@
 package edu.polytech.filrouge_tp3;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +34,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import org.osmdroid.config.Configuration;
@@ -53,18 +58,24 @@ public class Screen6Fragment extends Fragment {
 
     private static final double POLYTECH_LAT = 43.6156;
     private static final double POLYTECH_LNG = 7.0718;
-    private static final String DEFAULT_IMG = "istockphoto1455492016612x612";
+    private static final String DEFAULT_IMG = "placeholder_photo";
     private static final String AUTHORITY = "edu.polytech.filrouge_tp3.fileprovider";
     private static final String STATE_PHOTO_PATH = "screen6_photo_path";
     private static final String STATE_PENDING_PATH = "screen6_pending_path";
 
     private MapView mapView;
+    private Marker marker;
+    private GeoPoint selectedPoint;
+    private LocationListener locationListener;
     private MaterialButton selectedTypeButton;
     private MaterialButton[] typeButtons;
     private SeekBar seekBar;
     private Spinner spinner;
+    private TextInputLayout titleLayout;
+    private TextInputLayout descriptionLayout;
     private TextInputEditText editTitle;
     private TextInputEditText editDescription;
+    private TextInputEditText currentTargetEditText;
 
     private ImageView photoPreview;
     private String capturedPhotoPath;
@@ -72,7 +83,23 @@ public class Screen6Fragment extends Fragment {
     private TimePicker timePicker;
 
     private final ActivityResultLauncher<String> locationPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), granted -> {});
+            new ActivityResultContracts.RequestPermission(),
+            granted -> {
+                if (Boolean.TRUE.equals(granted)) {
+                    requestFreshLocation();
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> voiceLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    ArrayList<String> matches = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (matches != null && !matches.isEmpty() && currentTargetEditText != null) {
+                        currentTargetEditText.setText(matches.get(0));
+                    }
+                }
+            });
 
     private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -129,29 +156,43 @@ public class Screen6Fragment extends Fragment {
         timePicker = view.findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
 
-        // GPS : on demande la position pour géolocaliser le signalement
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        // Carte
+        // on place le marqueur sur la position GPS de l'appareil.
         mapView = view.findViewById(R.id.reportMapView);
-        GeoPoint incidentPos = new GeoPoint(POLYTECH_LAT, POLYTECH_LNG);
+        double[] pos = getDeviceLocation();
+        selectedPoint = new GeoPoint(pos[0], pos[1]);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapView.getController().setZoom(18.0);
-        mapView.getController().setCenter(incidentPos);
-        Marker marker = new Marker(mapView);
-        marker.setPosition(incidentPos);
+        mapView.getController().setCenter(selectedPoint);
+
+        marker = new Marker(mapView);
+        marker.setPosition(selectedPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setDraggable(false);
+        marker.setDraggable(true);
+        marker.setTitle("Position de l'incident");
         marker.setOnMarkerClickListener((m, mv) -> true);
+        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            @Override public void onMarkerDrag(Marker m) {}
+            @Override public void onMarkerDragEnd(Marker m) { selectedPoint = m.getPosition(); }
+            @Override public void onMarkerDragStart(Marker m) {}
+        });
         mapView.getOverlays().add(marker);
 
-        // Champs texte
+        requestFreshLocation();
+
+        // Champs texte avec micro (reconnaissance vocale)
+        titleLayout = view.findViewById(R.id.titleLayout);
+        descriptionLayout = view.findViewById(R.id.descriptionLayout);
         editTitle = view.findViewById(R.id.editTitle);
         editDescription = view.findViewById(R.id.editDescription);
+
+        titleLayout.setEndIconOnClickListener(v -> startVoiceRecognition(editTitle));
+        descriptionLayout.setEndIconOnClickListener(v -> startVoiceRecognition(editDescription));
 
         // Boutons type
         MaterialButton btnAccident  = view.findViewById(R.id.btnAccident);
@@ -191,12 +232,12 @@ public class Screen6Fragment extends Fragment {
         displayPreview(capturedPhotoPath);
 
         // Bouton envoyer
-        view.findViewById(R.id.btnEnvoyer).setOnClickListener(v -> onEnvoyer());
+        view.findViewById(R.id.btnEnvoyer).setOnClickListener(v -> onSend());
 
         return view;
     }
 
-    private void onEnvoyer() {
+    private void onSend() {
         String title = editTitle.getText() != null ? editTitle.getText().toString().trim() : "";
         String description = editDescription.getText() != null ? editDescription.getText().toString().trim() : "";
         String type = selectedTypeButton != null ? selectedTypeButton.getText().toString() : "";
@@ -218,12 +259,12 @@ public class Screen6Fragment extends Fragment {
 
         String image = capturedPhotoPath != null ? capturedPhotoPath : DEFAULT_IMG;
 
-        // position réelle (GPS) si disponible, sinon Polytech
-        double[] pos = getDeviceLocation();
+        // position choisie sur la carte (GPS de l'appareil, ajustable par l'utilisateur)
+        GeoPoint pos = selectedPoint != null ? selectedPoint : new GeoPoint(POLYTECH_LAT, POLYTECH_LNG);
 
         // création via la factory urbaine
         Issue newIssue = new UrbanFactory().create(
-                pos[0], pos[1],
+                pos.getLatitude(), pos.getLongitude(),
                 title, description,
                 image, (float) gravity,
                 type, publicationTime, nbInjured
@@ -236,6 +277,56 @@ public class Screen6Fragment extends Fragment {
                 new String[]{"temoin", type});
     }
 
+    private void requestFreshLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        if (lm == null) return;
+
+        Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (last == null) last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (last != null) updateLocation(last.getLatitude(), last.getLongitude());
+
+        if (locationListener == null) {
+            locationListener = new LocationListener() {
+                @Override public void onLocationChanged(@NonNull Location location) {
+                    updateLocation(location.getLatitude(), location.getLongitude());
+                    stopLocationUpdates();
+                }
+                @Override public void onProviderEnabled(@NonNull String provider) {}
+                @Override public void onProviderDisabled(@NonNull String provider) {}
+                @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
+            };
+        }
+        try {
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener);
+            }
+            if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener);
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Localisation refusée", e);
+        }
+    }
+
+    // Recentre la carte et le marqueur sur la position donnée.
+    private void updateLocation(double lat, double lng) {
+        if (mapView == null || marker == null) return;
+        selectedPoint = new GeoPoint(lat, lng);
+        marker.setPosition(selectedPoint);
+        mapView.getController().setCenter(selectedPoint);
+        mapView.invalidate();
+    }
+
+    private void stopLocationUpdates() {
+        if (locationListener == null) return;
+        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        if (lm != null) lm.removeUpdates(locationListener);
+    }
+
     private double[] getDeviceLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -245,6 +336,19 @@ public class Screen6Fragment extends Fragment {
             if (loc != null) return new double[]{loc.getLatitude(), loc.getLongitude()};
         }
         return new double[]{POLYTECH_LAT, POLYTECH_LNG};
+    }
+
+    private void startVoiceRecognition(TextInputEditText target) {
+        currentTargetEditText = target;
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Parlez pour remplir le champ...");
+        try {
+            voiceLauncher.launch(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "Reconnaissance vocale non supportée sur cet appareil.", e);
+        }
     }
 
     private void selectTypeButton(MaterialButton selected) {
@@ -336,6 +440,7 @@ public class Screen6Fragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        stopLocationUpdates();
         if (mapView != null) mapView.onDetach();
     }
 }

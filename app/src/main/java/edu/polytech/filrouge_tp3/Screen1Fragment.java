@@ -112,7 +112,7 @@ public class Screen1Fragment extends Fragment implements ViewObserver {
                 }
             });
 
-            // photo existante (ou null -> placeholder)
+            // photo existante
             sendPhotoToCamera(displayedIssue.getPhoto());
         } else {
             title.setText("Titre");

@@ -11,7 +11,7 @@ public class IssueManager implements ModelObservable {
     private final List<Issue> issues = new ArrayList<>();
     private final List<ViewObserver> observers = new ArrayList<>();
 
-    private static final String IMG = "istockphoto1455492016612x612";
+    private static final String IMG = "placeholder_photo";
 
     private final UrbanFactory urbanFactory = new UrbanFactory();
     private final HighwayFactory highwayFactory = new HighwayFactory();

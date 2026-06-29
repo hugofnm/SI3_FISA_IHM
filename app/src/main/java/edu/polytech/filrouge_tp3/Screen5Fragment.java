@@ -39,7 +39,7 @@ public class Screen5Fragment extends Fragment implements ViewObserver, Clickable
     private IssueAdapter listAdapter;
     private final List<Issue> visibleIssues = new ArrayList<>();
 
-    // Position fixe : Polytech Nice Sophia
+    // Position fixe : Polytech
     private static final double POLYTECH_LAT = 43.6156;
     private static final double POLYTECH_LNG = 7.0718;
 

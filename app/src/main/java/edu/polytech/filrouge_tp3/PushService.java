@@ -86,7 +86,7 @@ public class PushService extends FirebaseMessagingService {
                 .setPriority(urgent ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent);
 
-        // Photo : grande image dépliée si une URL est fournie
+        // grande image dépliée si une URL est fournie
         Bitmap picture = loadBitmap(imageUrl);
         if (picture != null) {
             builder.setLargeIcon(picture);
@@ -102,7 +102,6 @@ public class PushService extends FirebaseMessagingService {
     private Bitmap loadBitmap(String url) {
         if (url == null || url.isEmpty()) return null;
         try {
-            // onMessageReceived tourne déjà sur un thread de fond : get() bloquant OK
             return Picasso.get().load(url).get();
         } catch (Exception e) {
             Log.w(TAG, "Image de notif non chargée : " + url, e);

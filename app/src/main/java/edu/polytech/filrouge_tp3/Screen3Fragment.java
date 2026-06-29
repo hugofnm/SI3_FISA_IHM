@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -58,7 +61,7 @@ public class Screen3Fragment extends Fragment {
 
     private static final double POLYTECH_LAT = 43.6156;
     private static final double POLYTECH_LNG = 7.0718;
-    private static final String DEFAULT_IMG = "istockphoto1455492016612x612";
+    private static final String DEFAULT_IMG = "placeholder_photo";
     private static final String AUTHORITY = "edu.polytech.filrouge_tp3.fileprovider";
     private static final String STATE_PHOTO_PATH = "screen3_photo_path";
     private static final String STATE_PENDING_PATH = "screen3_pending_path";
@@ -69,6 +72,9 @@ public class Screen3Fragment extends Fragment {
     private TimePicker timePicker;
 
     private MapView mapView;
+    private Marker marker;
+    private GeoPoint selectedPoint;
+    private LocationListener locationListener;
     private TextInputLayout titleLayout;
     private TextInputLayout descriptionLayout;
     private TextInputEditText editTitle;
@@ -89,6 +95,14 @@ public class Screen3Fragment extends Fragment {
                     if (matches != null && !matches.isEmpty() && currentTargetEditText != null) {
                         currentTargetEditText.setText(matches.get(0));
                     }
+                }
+            });
+
+    private final ActivityResultLauncher<String> locationPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            granted -> {
+                if (Boolean.TRUE.equals(granted)) {
+                    requestFreshLocation();
                 }
             });
 
@@ -158,19 +172,34 @@ public class Screen3Fragment extends Fragment {
         titleLayout.setEndIconOnClickListener(v -> startVoiceRecognition(editTitle));
         descriptionLayout.setEndIconOnClickListener(v -> startVoiceRecognition(editDescription));
 
-        // Carte
+        // onn demande la position pour géolocaliser le signalement
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
         mapView = view.findViewById(R.id.reportMapView);
-        GeoPoint incidentPos = new GeoPoint(POLYTECH_LAT, POLYTECH_LNG);
+        double[] pos = getDeviceLocation();
+        selectedPoint = new GeoPoint(pos[0], pos[1]);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapView.getController().setZoom(18.0);
-        mapView.getController().setCenter(incidentPos);
-        Marker marker = new Marker(mapView);
-        marker.setPosition(incidentPos);
+        mapView.getController().setCenter(selectedPoint);
+
+        marker = new Marker(mapView);
+        marker.setPosition(selectedPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setDraggable(false);
+        marker.setDraggable(true);
+        marker.setTitle("Position de l'incident");
         marker.setOnMarkerClickListener((m, mv) -> true);
+        marker.setOnMarkerDragListener(new Marker.OnMarkerDragListener() {
+            @Override public void onMarkerDrag(Marker m) {}
+            @Override public void onMarkerDragEnd(Marker m) { selectedPoint = m.getPosition(); }
+            @Override public void onMarkerDragStart(Marker m) {}
+        });
         mapView.getOverlays().add(marker);
+
+        requestFreshLocation();
 
         // Boutons type (6)
         MaterialButton btnAccident  = view.findViewById(R.id.btnAccident);
@@ -255,9 +284,12 @@ public class Screen3Fragment extends Fragment {
 
         String image = capturedPhotoPath != null ? capturedPhotoPath : DEFAULT_IMG;
 
+        // position choisie sur la carte (GPS de l'appareil, ajustable par l'utilisateur)
+        GeoPoint pos = selectedPoint != null ? selectedPoint : new GeoPoint(POLYTECH_LAT, POLYTECH_LNG);
+
         // création via la factory autoroute
         Issue newIssue = new HighwayFactory().create(
-                POLYTECH_LAT, POLYTECH_LNG,
+                pos.getLatitude(), pos.getLongitude(),
                 title, description,
                 image, (float) gravity,
                 type, publicationTime,
@@ -268,6 +300,66 @@ public class Screen3Fragment extends Fragment {
         Toast.makeText(requireContext(), "Incident signalé !", Toast.LENGTH_SHORT).show();
         notifiable.onDataChange(FRAGMENT_ID, null, Notifiable.ACTION_SHOW_INSTRUCTIONS,
                 new String[]{"implique", type});
+    }
+
+    private void requestFreshLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        if (lm == null) return;
+
+        Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (last == null) last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (last != null) updateLocation(last.getLatitude(), last.getLongitude());
+
+        if (locationListener == null) {
+            locationListener = new LocationListener() {
+                @Override public void onLocationChanged(@NonNull Location location) {
+                    updateLocation(location.getLatitude(), location.getLongitude());
+                    stopLocationUpdates(); // un seul point frais suffit
+                }
+                @Override public void onProviderEnabled(@NonNull String provider) {}
+                @Override public void onProviderDisabled(@NonNull String provider) {}
+                @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
+            };
+        }
+        try {
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener);
+            }
+            if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener);
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Localisation refusée", e);
+        }
+    }
+
+    private void updateLocation(double lat, double lng) {
+        if (mapView == null || marker == null) return;
+        selectedPoint = new GeoPoint(lat, lng);
+        marker.setPosition(selectedPoint);
+        mapView.getController().setCenter(selectedPoint);
+        mapView.invalidate();
+    }
+
+    private void stopLocationUpdates() {
+        if (locationListener == null) return;
+        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        if (lm != null) lm.removeUpdates(locationListener);
+    }
+
+    private double[] getDeviceLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+            Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (loc == null) loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (loc != null) return new double[]{loc.getLatitude(), loc.getLongitude()};
+        }
+        return new double[]{POLYTECH_LAT, POLYTECH_LNG};
     }
 
     private void selectTypeButton(MaterialButton selected) {
@@ -374,6 +466,7 @@ public class Screen3Fragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        stopLocationUpdates();
         if (mapView != null) mapView.onDetach();
     }
 }
