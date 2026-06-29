@@ -22,17 +22,10 @@ public abstract class Issue implements Parcelable, IssueObservable {
 
     public String title;
     public String priority;
-    public String priorityLabel;
     public float score;
-    public String cordonnates;
-    public String date;
-    public String location; // NON obligatoire
     public String type; // enum
-    public int nbDead;
-    public String involvedCar; // enum // NON obligatoire
     public boolean isBlocked; // NON obligatoire
     public String description; // compat UI
-    public String descriptionLegacy; // NON obligatoire
     public String photo;
     public double latitude;
     public double longitude;
@@ -61,7 +54,6 @@ public abstract class Issue implements Parcelable, IssueObservable {
     public Issue(String title, String description, String priority, float score) {
         this(title, description, parsePriority(priority));
         this.score = score;
-        this.priorityLabel = priority;
     }
 
     // Constructeur 1 : champs essentiels
@@ -76,7 +68,6 @@ public abstract class Issue implements Parcelable, IssueObservable {
         this.type = type;
         this.publicationTime = publicationTime;
         this.nbInjured = nbInjured;
-        this.nbDead = nbInjured;
     }
 
     // Constructeur 2 : champs essentiels + voitures impliquées + route bloquée
@@ -89,23 +80,6 @@ public abstract class Issue implements Parcelable, IssueObservable {
         if (isBlocked) setPriority(Priority.HIGH);
     }
 
-    public Issue(String cordonnates, String date, String location, String type, int nbDead, String involvedCar,
-            boolean isBlocked, String description, String photo) {
-        this(UUID.randomUUID().toString(), type, description, System.currentTimeMillis(),
-                isBlocked ? Priority.HIGH : Priority.MEDIUM, Status.REPORTED);
-        this.cordonnates = cordonnates;
-        this.date = date;
-        this.location = location;
-        this.type = type;
-        this.nbDead = nbDead;
-        this.involvedCar = involvedCar;
-        this.isBlocked = isBlocked;
-        this.photo = photo;
-        this.score = this.incidentStatus.getRating();
-        this.priorityLabel = this.incidentPriority.name();
-        this.descriptionLegacy = description;
-    }
-
     protected Issue(Parcel in) {
         incidentId = in.readString();
         incidentTitle = in.readString();
@@ -114,18 +88,11 @@ public abstract class Issue implements Parcelable, IssueObservable {
         incidentPriority = parsePriority(in.readString());
         incidentStatus = parseStatus(in.readString());
         score = in.readFloat();
-        cordonnates = in.readString();
-        date = in.readString();
-        location = in.readString();
         type = in.readString();
-        nbDead = in.readInt();
-        involvedCar = in.readString();
         isBlocked = in.readByte() != 0;
-        descriptionLegacy = in.readString();
         photo = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
-        priorityLabel = incidentPriority.name();
         observers = new ArrayList<>();
         syncLegacyFields();
     }
@@ -168,7 +135,6 @@ public abstract class Issue implements Parcelable, IssueObservable {
             return;
         }
         this.incidentPriority = priority;
-        this.priorityLabel = priority.name();
         syncLegacyFields();
         notifyPriorityChanged();
     }
@@ -241,9 +207,7 @@ public abstract class Issue implements Parcelable, IssueObservable {
     protected void syncLegacyFields() {
         this.title = incidentTitle;
         this.description = incidentDescription;
-        this.descriptionLegacy = incidentDescription;
         this.priority = incidentPriority == null ? null : incidentPriority.name();
-        this.priorityLabel = this.priority;
         this.score = incidentStatus == null ? score : incidentStatus.getRating();
     }
 
@@ -287,14 +251,8 @@ public abstract class Issue implements Parcelable, IssueObservable {
         parcel.writeString(incidentPriority == null ? null : incidentPriority.name());
         parcel.writeString(incidentStatus == null ? null : incidentStatus.name());
         parcel.writeFloat(score);
-        parcel.writeString(cordonnates);
-        parcel.writeString(date);
-        parcel.writeString(location);
         parcel.writeString(type);
-        parcel.writeInt(nbDead);
-        parcel.writeString(involvedCar);
         parcel.writeByte((byte) (isBlocked ? 1 : 0));
-        parcel.writeString(descriptionLegacy);
         parcel.writeString(photo);
         parcel.writeDouble(latitude);
         parcel.writeDouble(longitude);

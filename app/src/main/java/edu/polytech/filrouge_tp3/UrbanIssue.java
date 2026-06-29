@@ -12,13 +12,6 @@ public class UrbanIssue extends Issue {
         setPriority(Priority.MEDIUM);
     }
 
-    public UrbanIssue(String cordonnates, String date, String location, String type, int nbDead, String involvedCar,
-                      boolean isBlocked, String description, String photo) {
-        super(cordonnates, date, location, type, nbDead, involvedCar, isBlocked, description, photo);
-        this.type = "Urban";
-        setPriority(Priority.MEDIUM);
-    }
-
     public UrbanIssue(double latitude, double longitude, String name, String description,
                       String image, float gravity, String type, String publicationTime, int nbInjured) {
         super(latitude, longitude, name, description, image, gravity, type, publicationTime, nbInjured);

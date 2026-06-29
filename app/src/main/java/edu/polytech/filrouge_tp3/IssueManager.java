@@ -1,7 +1,6 @@
 package edu.polytech.filrouge_tp3;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class IssueManager implements ModelObservable {
